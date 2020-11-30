@@ -9,40 +9,40 @@
 
 CLIENT *clnt;
 
-char* get_pathname(filename name){
-    char *pathname = (char *)malloc((strlen(FOLDER_CLIENT) + strlen(name)) * sizeof(char));
-    sprintf(pathname, "%s%s",FOLDER_CLIENT, name);
-    return pathname;
+char* get_pathname(filename name) {
+	char *pathname = (char *)malloc((strlen(FOLDER_CLIENT) + strlen(name)) * sizeof(char));
+	sprintf(pathname, "%s%s", FOLDER_CLIENT, name);
+	return pathname;
 }
 
 int writeFileLocal(filename name, filedata data)
 {
 	int result;
-    char *pathname = get_pathname(name);
+	char *pathname = get_pathname(name);
 	FILE *file = fopen(pathname, "ab");
-    result = fwrite(data.filedata_val, sizeof(char), data.filedata_len, file);
+	result = fwrite(data.filedata_val, sizeof(char), data.filedata_len, file);
 	fclose(file);
-    free(pathname);
+	free(pathname);
 	return result;
 }
 
 void pre_rpc(char *host, char *protocol)
 {
-	#ifndef	DEBUG
-		clnt = clnt_create (host, FILESERVER_PROGRAM, FILESERVER_VERSION, protocol);
-		if (clnt == NULL) {
-			clnt_pcreateerror (host);
-			exit (1);
-		}
-	#endif	/* DEBUG */
+#ifndef	DEBUG
+	clnt = clnt_create (host, FILESERVER_PROGRAM, FILESERVER_VERSION, protocol);
+	if (clnt == NULL) {
+		clnt_pcreateerror (host);
+		exit (1);
+	}
+#endif	/* DEBUG */
 
 }
 
 void post_rpc()
 {
-	#ifndef	DEBUG
-		clnt_destroy (clnt);
-	#endif	 /* DEBUG */
+#ifndef	DEBUG
+	clnt_destroy (clnt);
+#endif	 /* DEBUG */
 }
 
 void check_retval(enum clnt_stat retval, CLIENT *clnt)
@@ -54,7 +54,7 @@ void check_retval(enum clnt_stat retval, CLIENT *clnt)
 
 }
 
-void copyFile(filename filename_server, filename filename_client){
+void copyFile(filename filename_server, filename filename_client) {
 	enum clnt_stat retval;
 	filedata result;
 	int sizeFile;
@@ -62,7 +62,7 @@ void copyFile(filename filename_server, filename filename_client){
 	retval = size_1(filename_server, &sizeFile, clnt);
 	check_retval(retval, clnt);
 
-	if(sizeFile > -1) {
+	if (sizeFile > -1) {
 		result.filedata_len = 0;
 		result.filedata_val = (char *)calloc(sizeFile, sizeof(char));
 		retval = read_1(filename_server, 0, sizeFile, &result, clnt);
@@ -81,7 +81,7 @@ void copyFile(filename filename_server, filename filename_client){
 		writeFileLocal(filename_client, result);
 
 		free(result.filedata_val);
-	
+
 	} else {
 		fprintf(stderr, "%s", "File Not Found!\n");
 		exit(1);
@@ -96,9 +96,9 @@ int main (int argc, char *argv[])
 {
 
 	if (argc != 4) {
-    	fprintf(stderr,"Usage: %s hostname_server filename_server filename_client \n",argv[0]);
-    	exit(1);
-  	}
+		fprintf(stderr, "Usage: %s hostname_server filename_server filename_client \n", argv[0]);
+		exit(1);
+	}
 
 	char *host = argv[1];
 	filename filename_server = argv[2];
